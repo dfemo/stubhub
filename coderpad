@@ -43,7 +43,9 @@ public string City{ get; set; }
                 // events.Where(x=>x.City==customer.City).ToList().ForEach(evt=>AddToEmail(customer, evt));
                
                var distanceCache = new Dictionary<string, int>();
-              events.OrderBy(
+               try  {
+
+ events.OrderBy(
                   x=>{
                       var key=customer.City+x.City;
                       if(distanceCache.ContainsKey(key) )
@@ -57,7 +59,14 @@ public string City{ get; set; }
                       }
                   }
                 ).Take(5).ToList().ForEach(evt=>AddToEmail(customer, evt));
-
+               }catch{
+                   //if get distance method fails
+events.Where(x=>x.City==customer.City).Take(1).ToList().ForEach(evt=>AddToEmail(customer, evt));
+               }
+             
+//no 5 - adding price as sort 
+events.OrderBy(x=>GetPrice(x)).
+OrderBy(x=>GetDistance(x.City, customer.City)).ToList().ForEach(evt=>AddToEmail(customer, evt));
                
             }
 
